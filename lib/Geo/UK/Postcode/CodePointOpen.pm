@@ -1,6 +1,6 @@
 package Geo::UK::Postcode::CodePointOpen;
 
-our $VERSION = '0.001'; # VERSION
+our $VERSION = '0.002'; # VERSION
 
 # ABSTRACT: Utility object to extract OS Code-Point Open data for British Postcodes
 
@@ -152,7 +152,7 @@ Geo::UK::Postcode::CodePointOpen - Utility object to extract OS Code-Point Open 
 
 =head1 VERSION
 
-version 0.001
+version 0.002
 
 =head1 SYNOPSIS
 
