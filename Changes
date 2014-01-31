@@ -1,5 +1,13 @@
 Revision history for Geo-UK-Postcode-CodePointOpen
 
+0.003  2014-01-31 15:46:44 GMT
+
+  [Features]
+  - Added batch_iterator() method
+
+  [Maintenance]
+  - Switched to Dist::Milla
+
 0.002     2014-01-25 09:06:40 Europe/London
 
   - Bugfix release - prereq on Path::Tiny 0.48

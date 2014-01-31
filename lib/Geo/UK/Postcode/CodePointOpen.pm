@@ -1,8 +1,6 @@
 package Geo::UK::Postcode::CodePointOpen;
 
-our $VERSION = '0.002'; # VERSION
-
-# ABSTRACT: Utility object to extract OS Code-Point Open data for British Postcodes
+our $VERSION = '0.003';
 
 use Moo;
 use Types::Path::Tiny qw/ Dir /;
@@ -138,21 +136,34 @@ sub read_iterator {
     return $iterator;
 }
 
+sub batch_iterator {
+    my ( $self, %args ) = @_;
+
+    my $batch_size = $args{batch_size} || 100;
+
+    my $read_iterator = $self->read_iterator(%args);
+
+    return sub {
+
+        my $i = 1;
+        my @postcodes;
+
+        while ( my $pc = $read_iterator->() ) {
+            push @postcodes, $pc;
+            last if ++$i > $batch_size;
+        }
+
+        return @postcodes;
+    };
+}
+
 1;
 
 __END__
 
-=pod
-
-=encoding UTF-8
-
 =head1 NAME
 
 Geo::UK::Postcode::CodePointOpen - Utility object to extract OS Code-Point Open data for British Postcodes
-
-=head1 VERSION
-
-version 0.002
 
 =head1 SYNOPSIS
 
@@ -164,6 +175,11 @@ version 0.002
 
     my $iterator = $code_point_open->read_iterator();
     while ( my $pc = $iterator->() ) {
+        ...;
+    }
+
+    my $batch_iterator = $code_point_open->batch_iterator();
+    while ( my @batch = $batch_iterator->() ) {
         ...;
     }
 
@@ -208,8 +224,28 @@ Constructor.
         split_postcode     => 1,    # split into outcode/incode
     );
 
-Returns a coderef iterator. Call repeatedly to get a hashref of data for each
-postcode in data files.
+    while ( my $pc = $iterator->() ) {
+        ...
+    }
+
+Returns a coderef iterator. Call that coderef repeatedly to get a hashref of
+data for each postcode in data files.
+
+=head2 batch_iterator
+
+    my $batch_iterator = $code_point_open->batch_iterator(
+        batch_size         => 100,  # number per batch (default 100)
+        short_column_names => 1,    # default is false (long names)
+        include_lat_long   => 1,    # default is false
+        split_postcode     => 1,    # split into outcode/incode
+    );
+
+    while ( my @batch = $batch_iterator->() ) {
+        ...
+    }
+
+Returns a coderef iterator. Call that coderef repeatedly to get a list of
+postcode hashrefs.
 
 =head1 SEE ALSO
 
@@ -221,34 +257,18 @@ L<Geo::UK::Postcode::Regex>
 
 =back
 
-=for :stopwords cpan testmatrix url annocpan anno bugtracker rt cpants kwalitee diff irc mailto metadata placeholders metacpan
-
-=head1 SUPPORT
-
-=head2 Bugs / Feature Requests
-
-Please report any bugs or feature requests through the issue tracker
-at L<https://github.com/mjemmeson/Geo-UK-Postcode-CodePointOpen/issues>.
-You will be notified automatically of any progress on your issue.
-
-=head2 Source Code
-
-This is open source software.  The code repository is available for
-public review and contribution under the terms of the license.
-
-L<https://github.com/mjemmeson/Geo-UK-Postcode-CodePointOpen>
-
-  git clone https://github.com/mjemmeson/Geo-UK-Postcode-CodePointOpen.git
-
 =head1 AUTHOR
 
-Michael Jemmeson <mjemmeson@cpan.org>
+Michael Jemmeson E<lt>mjemmeson@cpan.orgE<gt>
 
-=head1 COPYRIGHT AND LICENSE
+=head1 COPYRIGHT
 
-This software is copyright (c) 2014 by Michael Jemmeson <mjemmeson@cpan.org>.
+Copyright 2014- Michael Jemmeson
 
-This is free software; you can redistribute it and/or modify it under
-the same terms as the Perl 5 programming language system itself.
+=head1 LICENSE
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
 
 =cut
+
