@@ -16,6 +16,7 @@ dist.ini
 lib/Geo/UK/Postcode/CodePointOpen.pm
 t/01-use.t
 t/batch.t
+t/data_files.t
 t/metadata.t
 t/read.t
 t/release-pod-syntax.t
